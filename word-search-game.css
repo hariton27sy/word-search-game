@@ -65,7 +65,9 @@
 }
 
 .word-search-game .rf-selected {
-    background: rgb(56, 56, 56);
+    background: rgb(231, 65, 53);
+    color: white;
+    border-color: transparent;
 }
 
 .word-search-game .rf-pfalse {
