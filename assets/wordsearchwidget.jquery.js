@@ -113,6 +113,13 @@
             onWordSearchComplete: undefined
         },
 
+        _mapEventToCell: function (event) {
+            var currentColumn = Math.ceil((event.pageX - this._cellX) / this._cellWidth);
+            var currentRow = Math.ceil((event.pageY - this._cellY) / this._cellHeight);
+            var el = $('#rf-tablegrid tr:nth-child(' + currentRow + ') td:nth-child(' + currentColumn + ')');
+            return el;
+        },
+
         _create: function () {
             //member variables
             this.model = GameWidgetHelper.prepGrid(this.options.gridsize, this.options.wordlist)
@@ -129,7 +136,11 @@
             this.options.distance = 0; // set mouse option property
             this._mouseInit();
 
-
+            var cell = $('#rf-tablegrid tr:first td:first');
+            this._cellWidth = cell.outerWidth();
+            this._cellHeight = cell.outerHeight();
+            this._cellX = cell.offset().left;
+            this._cellY = cell.offset().top;
         },//_create
 
         destroy: function () {
@@ -154,16 +165,17 @@
             else if (panel == 'rf-wordcontainer') {
                 //User has requested help. Identify the word on the grid
                 //We have a reference to the td in the cells that make up this word
-                //var idx = $(event.target).parent().children().index(event.target);
-                //var selectedWord = this.model.wordList.get(idx);
-                //$(selectedWord.cellsUsed).each(function () {
-                //    Visualizer.highlight($(this.td));
-                //});
+                var idx = $(event.target).parent().children().index(event.target);
+                var selectedWord = this.model.wordList.get(idx);
+                $(selectedWord.cellsUsed).each(function () {
+                   Visualizer.highlight($(this.td));
+                });
             }
 
         },
 
         _mouseDrag: function (event) {
+            event.target = this._mapEventToCell(event);
 
             //if this.root - clear out everything and return to orignal clicked state
             if (this.startedAt.isSameCell(event.target)) {
