@@ -541,7 +541,7 @@
         this.cells = null;
 
         this.directions = [
-            "LeftDiagonal",
+            //"LeftDiagonal",
             "Horizontal",
             //"RightDiagonal",
             "Vertical"
@@ -1324,7 +1324,7 @@
         },
 
         signalWordFound: function (idx) {
-            var w = $("#theGrid li").get(idx);
+            var w = $(".rf-wordcontainer li").get(idx);
             if (!jQuery(w).hasClass('rf-foundword')) {
                 Visualizer.signalWordFound(w);
                 currentWord++;
