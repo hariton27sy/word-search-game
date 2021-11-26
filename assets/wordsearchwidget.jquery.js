@@ -165,11 +165,11 @@
             else if (panel == 'rf-wordcontainer') {
                 //User has requested help. Identify the word on the grid
                 //We have a reference to the td in the cells that make up this word
-                var idx = $(event.target).parent().children().index(event.target);
-                var selectedWord = this.model.wordList.get(idx);
-                $(selectedWord.cellsUsed).each(function () {
-                   Visualizer.highlight($(this.td));
-                });
+                // var idx = $(event.target).parent().children().index(event.target);
+                // var selectedWord = this.model.wordList.get(idx);
+                // $(selectedWord.cellsUsed).each(function () {
+                //    Visualizer.highlight($(this.td));
+                // });
             }
 
         },
