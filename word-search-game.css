@@ -1,7 +1,12 @@
+body {
+    font-family: sans-serif;
+    font-weight: 300;
+}
+
 .word-search-game {
     display: flex;
-    flex-wrap: wrap;
-    column-gap: 32px;
+    flex-direction: column;
+    align-items: center;
 }
 
 .word-search-game .rf-tgrid {
@@ -14,6 +19,7 @@
     font-size: 16px;
     font-weight: normal;
     text-align: center;
+    margin-bottom: 36px;
 }
 
 .word-search-game .rf-tablestyle {
@@ -25,9 +31,10 @@
 }
 
 .word-search-game .rf-wordcontainer {
-    margin: 1em 1em 1em 0;
+    margin: 1em auto;
     padding-right: 10px;
     font-size: 14px;
+    max-width: 600px;
     font-weight: normal;
 }
 
@@ -38,14 +45,10 @@
 }
 
 .word-search-game .rf-wordcontainer li {
-    margin-bottom: .45em;
+    margin-bottom: 0;
     font-size: 20px;
     text-transform: lowercase;
-}
-
-.word-search-game .rf-wordcontainer li::before {
-    content: '—';
-    margin-right: .4em;
+    margin-left: 2em;
 }
 
 .word-search-game .rf-foundword {
@@ -58,19 +61,45 @@
     background: rgb(182, 23, 23);
 }
 
-
 .word-search-game .rf-glowing {
     background: rgb(255, 229, 83);
 
 }
 
 .word-search-game .rf-selected {
-    background: rgb(231, 65, 53);
-    color: white;
-    border-color: transparent;
+    background: #fffae0;
 }
 
 .word-search-game .rf-pfalse {
     visibility: hidden;
-    color: rgb(56, 56, 56);
+    color: #fffae0;
+}
+
+.word-search-game .rf-wordcontainer ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.word-search-game .rf-wordcontainer li::before {
+    content: '·';
+    position: relative;
+    top: .05em;
+    left: -.3em;
+}
+
+.word-search-game .rf-foundword {
+    color: #8e8e8e;
+    font-family: sans-serif;
+    text-decoration: line-through;
+}
+
+.word-search-game .rf-foundword::before {
+    text-decoration: none;
+    color: transparent;
+}
+
+.word-search-game .rf-wordcontainer li:first-child::before {
+    content: none;
 }

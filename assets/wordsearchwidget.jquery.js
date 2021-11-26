@@ -496,12 +496,7 @@
         },
 
         signalWordFound: function (w) {
-
-            $(w).css("background", 'yellow').animate({ "opacity": 'hide' }, 1000, "linear",
-                function () {
-                    $(w).css("background", 'white')
-                    $(w).addClass('rf-foundword').animate({ "opacity": 'show' }, 1000, "linear")
-                });
+            $(w).addClass('rf-foundword').animate({ "opacity": 'show' }, 1000, "linear")
         },
 
 
