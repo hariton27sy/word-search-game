@@ -62,12 +62,13 @@ body {
 }
 
 .word-search-game .rf-glowing {
-    background: rgb(255, 229, 83);
+    background: #F07C78;
 
 }
 
 .word-search-game .rf-selected {
-    background: #fffae0;
+    background: #F03B36;
+    color: #fff;
 }
 
 .word-search-game .rf-pfalse {

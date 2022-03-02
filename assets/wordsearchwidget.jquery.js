@@ -384,8 +384,8 @@
             //nominatedCells.push(event.target); // self
             this.elems.push($tgt.prev()[0], $tgt.next()[0]); //horizontal
             this.elems.push(above, below,
-                $(above).next()[0], $(above).prev()[0], //diagonal
-                $(below).next()[0], $(below).prev()[0] //diagonal
+            //     $(above).next()[0], $(above).prev()[0], //diagonal selection
+            //     $(below).next()[0], $(below).prev()[0] //diagonal selection
             );
 
 
@@ -696,7 +696,7 @@
             var freeCounter = 0;
             var chars = this.word.chars;
             for (var i = col; i < this.size; i++) {
-                if (this.cells[row][i].isUnwritten() || this.cells[row][i] == chars[i]) {
+                if (this.cells[row][i].isUnwritten()) {
                     freeCounter++;
                     if (freeCounter == word.size) {
                         isFree = true;
@@ -716,7 +716,7 @@
             var freeCounter = 0;
             var chars = word.chars;
             for (var i = 0; i < this.size; i++) {
-                if (this.cells[row][i].isUnwritten() || this.cells[row][i] == chars[i]) {
+                if (this.cells[row][i].isUnwritten()) {
                     freeCounter++;
                     if (freeCounter == word.size) {
                         freeLocation = (i - (word.size - 1));
@@ -818,7 +818,7 @@
             var freeCounter = 0;
             var chars = this.word.chars;
             for (var i = row; i < this.size; i++) { // CHANGED
-                if (this.cells[i][col].isUnwritten() || chars[i] == this.cells[i][col].value) { //CHANGED
+                if (this.cells[i][col].isUnwritten()) { //CHANGED
                     freeCounter++;
                     if (freeCounter == word.size) {
                         isFree = true;
@@ -838,7 +838,7 @@
             var freeCounter = 0;
             var chars = word.chars;
             for (var i = 0; i < this.size; i++) {
-                if (this.cells[i][col].isUnwritten() || chars[i] == this.cells[i][col].value) { //CHANGED
+                if (this.cells[i][col].isUnwritten()) { //CHANGED
                     freeCounter++;
                     if (freeCounter == word.size) {
                         freeLocation = (i - (word.size - 1));
@@ -853,300 +853,6 @@
 
         }
     }//VerticalPopulator
-
-
-    //Create a LeftDiagonal Populator Strategy 
-    function LeftDiagonalPopulator(row, col, word, grid) {
-
-        this.grid = grid;
-        this.row = row;
-        this.col = col;
-        this.word = word;
-        this.size = this.grid.size();
-        this.cells = this.grid.cells;
-
-        //populate the word
-        this.populate = function () {
-
-
-            // try and place word in this row
-
-            // check if this row has a contigous block free
-            // 1. starting at col (honour the input)
-            if (this.willWordFit()) {
-                this.writeWord();
-            }
-            else {
-
-                var output = this.findContigousSpace(this.row, this.col, word);
-
-                if (output[0] != true) {
-
-                    // for every row - try to fit this
-                    OUTER: for (var col = 0, row = (this.size - word.size); row >= 0; row--) {
-                        for (var j = 0; j < 2; j++) {
-
-                            var op = this.findContigousSpace((j == 0) ? row : col, (j == 0) ? col : row, word);
-
-                            if (op[0] == true) {
-                                this.row = op[1];
-                                this.col = op[2];
-                                this.writeWord();
-                                break OUTER;
-                            }
-                        }
-
-                    }
-                }
-                else {
-                    this.row = output[1];
-                    this.col = output[2];
-                    this.writeWord();
-                }
-
-
-            }
-            // if still not, then return false (i.e. not placed. we need to try another direction
-            return (word.isPlaced);
-
-
-        }//populate
-
-
-        //write word on grid at given location
-        //also remember which cells were used for displaying the word
-        this.writeWord = function () {
-
-            var chars = word.chars;
-            var lrow = this.row;
-            var lcol = this.col;
-            for (var i = 0; i < word.size; i++) {
-                var c = new Cell();
-                c.value = chars[i];
-                this.cells[lrow++][lcol++] = c;
-                word.containedIn(c);
-                word.isPlaced = true;
-            }
-
-        }
-
-        //try even harder, check if this word can be placed by overlapping cells with same content
-        this.isWordOverlapPossible = function (row, word) {
-            return -1; //TODO: implement
-        }
-
-        //check if word will fit at the chosen location
-        this.willWordFit = function () {
-            var isFree = false;
-            var freeCounter = 0;
-            var chars = this.word.chars;
-            var lrow = this.row;
-            var lcol = this.col;
-            var i = 0;
-            while (lcol < this.grid.size() && lrow < this.grid.size()) {
-                if (this.cells[lrow][lcol].isUnwritten() || this.cells[lrow][lcol] == chars[i++]) {
-                    freeCounter++;
-                    if (freeCounter == word.size) {
-                        isFree = true;
-                        break;
-                    }
-                }
-                else {
-                    break;
-                }
-                lrow++;
-                lcol++;
-
-            }
-            return isFree;
-        }
-
-        //try harder, check if there is contigous space anywhere on this line.
-        this.findContigousSpace = function (xrow, xcol, word) {
-            var freeLocation = false;
-            var freeCounter = 0;
-            var chars = word.chars;
-            var lrow = xrow;
-            var lcol = xcol;
-
-            while (lrow > 0 && lcol > 0) {
-                lrow--;
-                lcol--;
-            }
-            var i = 0;
-            while (true) {
-                if (this.cells[lrow][lcol].isUnwritten() || this.cells[lrow][lcol] == chars[i++]) {
-                    freeCounter++;
-                    if (freeCounter == word.size) {
-                        freeLocation = true;
-                        break;
-                    }
-                }
-                else {
-                    freeCounter = 0;
-                }
-                lcol++;
-                lrow++;
-
-                if (lcol >= this.size || lrow >= this.size) {
-                    break;
-                }
-            }
-            if (freeLocation) {
-                lrow = lrow - word.size + 1;
-                lcol = lcol - word.size + 1;
-            }
-            return [freeLocation, lrow, lcol];
-
-        }
-    }//LeftDiagonalPopulator
-
-
-    //Create a RightDiagonal Populator Strategy 
-    function RightDiagonalPopulator(row, col, word, grid) {
-
-        this.grid = grid;
-        this.row = row;
-        this.col = col;
-        this.word = word;
-        this.size = this.grid.size();
-        this.cells = this.grid.cells;
-
-        //populate the word
-        this.populate = function () {
-
-
-            // try and place word in this row
-
-            // check if this row has a contigous block free
-            // 1. starting at col (honour the input)
-            var rr = 0;
-            if (this.willWordFit()) {
-                this.writeWord();
-            }
-            else {
-
-                var output = this.findContigousSpace(this.row, this.col, word);
-
-                if (output[0] != true) {
-
-                    // for every row - try to fit this
-                    OUTER: for (var col = this.size - 1, row = (this.size - word.size); row >= 0; row--) {
-                        for (var j = 0; j < 2; j++) {
-
-                            var op = this.findContigousSpace((j == 0) ? row : (this.size - 1 - col), (j == 0) ? col : (this.size - 1 - row), word);
-
-                            if (op[0] == true) {
-                                this.row = op[1];
-                                this.col = op[2];
-                                this.writeWord();
-                                break OUTER;
-                            }
-                        }
-
-                    }
-                }
-                else {
-                    this.row = output[1];
-                    this.col = output[2];
-                    this.writeWord();
-                }
-
-
-            }
-            // if still not, then return false (i.e. not placed. we need to try another direction
-            return (word.isPlaced);
-
-
-        }//populate
-
-
-        //write word on grid at given location
-        //also remember which cells were used for displaying the word
-        this.writeWord = function () {
-
-            var chars = word.chars;
-            var lrow = this.row;
-            var lcol = this.col;
-            for (var i = 0; i < word.size; i++) {
-                var c = new Cell();
-                c.value = chars[i];
-                this.cells[lrow++][lcol--] = c;
-                word.containedIn(c);
-                word.isPlaced = true;
-            }
-
-        }
-
-        //try even harder, check if this word can be placed by overlapping cells with same content
-        this.isWordOverlapPossible = function (row, word) {
-            return -1; //TODO: implement
-        }
-
-        //check if word will fit at the chosen location
-        this.willWordFit = function () {
-            var isFree = false;
-            var freeCounter = 0;
-            var chars = this.word.chars;
-            var lrow = this.row;
-            var lcol = this.col;
-            var i = 0;
-            while (lcol >= 0 && lrow < this.grid.size()) {
-                if (this.cells[lrow][lcol].isUnwritten() || this.cells[lrow][lcol] == chars[i++]) {
-                    freeCounter++;
-                    if (freeCounter == word.size) {
-                        isFree = true;
-                        break;
-                    }
-                }
-                else {
-                    break;
-                }
-                lrow++;
-                lcol--;
-
-            }
-            return isFree;
-        }
-
-        //try harder, check if there is contigous space anywhere on this line.
-        this.findContigousSpace = function (xrow, xcol, word) {
-            var freeLocation = false;
-            var freeCounter = 0;
-            var chars = word.chars;
-            var lrow = xrow;
-            var lcol = xcol;
-
-            while (lrow > 0 && lcol < this.size - 1) {
-                lrow--;
-                lcol++;
-            }
-            var i = 0;
-            while (lcol >= 0 && lrow < this.grid.size()) {
-                if (this.cells[lrow][lcol].isUnwritten() || this.cells[lrow][lcol] == chars[i++]) {
-                    freeCounter++;
-                    if (freeCounter == word.size) {
-                        freeLocation = true;
-                        break;
-                    }
-                }
-                else {
-                    freeCounter = 0;
-                }
-                lrow++;
-                lcol--;
-                //            if (lcol <= 0 || lrow > this.size-1) {
-                //                break;
-                //            }
-            }
-            if (freeLocation) {
-                lrow = lrow - word.size + 1;
-                lcol = lcol + word.size - 1;
-            }
-            return [freeLocation, lrow, lcol];
-
-        }
-    }//RightDiagonalPopulator
 
     /*
      * Container for the Entire Model
@@ -1201,8 +907,6 @@
             }
             return false;
         }
-
-
     }
 
     /*
@@ -1289,6 +993,17 @@
             var cells = grid.cells;
 
 
+            /* 
+             *append words
+             */
+            var words = "<div id='rf-wordcontainer' class='rf-wordcontainer'><ul>"
+            $(model.wordList.words).each(function () {
+                words += '<li class=rf-p' + this.isPlaced + '>' + this.originalValue + '</li>';
+            });
+            words += "</ul></div>";
+
+            $(container).append(words); // append words
+
             var puzzleGrid = "<div id='rf-searchgamecontainer' class='rf-searchgamecontainer'><table id='rf-tablegrid' cellspacing=0 cellpadding=0 class='rf-tablestyle'>";
             for (var i = 0; i < grid.size(); i++) {
                 puzzleGrid += "<tr>";
@@ -1311,16 +1026,6 @@
                 y = 0;
                 x++;
             });
-
-            var words = "<div id='rf-wordcontainer' class='rf-wordcontainer'><ul>"
-            $(model.wordList.words).each(function () {
-                words += '<li class=rf-p' + this.isPlaced + '>' + this.originalValue + '</li>';
-            });
-            words += "</ul></div>";
-
-            $(container).append(words);
-
-
         },
 
         signalWordFound: function (idx) {
