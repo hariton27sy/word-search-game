@@ -129,7 +129,7 @@
 
             encontrePalabra = this.options.onWordFound;
             cuandoEncuentreTodas = this.options.onWordSearchComplete;
-            maxWords = this.options.wordlist.split(",").length;
+            maxWords = this.model.wordList.words.filter(w => w.isPlaced).length;
 
             GameWidgetHelper.renderGame(this.element[0], this.model);
 
